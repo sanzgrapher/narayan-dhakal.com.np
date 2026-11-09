@@ -1,0 +1,77 @@
+---
+import { profile, coreStack, proof } from '../data/profile';
+
+const askAiPrompt = `Who is ${profile.name}? Read ${new URL('/llms.txt', Astro.site)} and summarise his experience, projects and skills, and whether he'd be a good hire as a ${[profile.role, ...profile.alsoRoles].join(', ')}.`;
+const askAiUrl = `https://chatgpt.com/?hints=search&q=${encodeURIComponent(askAiPrompt)}`;
+---
+
+<section aria-labelledby="hero-title" class="mx-auto max-w-6xl px-5 pt-12 pb-16 sm:px-8 md:pt-16 md:pb-20">
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14">
+    <div class="animate-rise">
+      <p class="label inline-flex items-center gap-2 border-2 border-ink px-2.5 py-1">
+        <span class="size-2 animate-pulse rounded-full bg-accent" aria-hidden="true"></span>
+        {profile.availability} · {profile.remote}
+      </p>
+
+      <h1 id="hero-title" class="mt-6 font-wide text-5xl leading-[0.92] font-black tracking-tight uppercase md:text-7xl">
+        {profile.name}<span class="text-accent">.</span>
+      </h1>
+
+      <p class="mt-4 text-2xl font-bold md:text-3xl">{profile.role}</p>
+      <p class="mt-1.5 flex flex-wrap items-baseline gap-x-2 text-lg font-bold md:text-xl">
+        <span class="label text-ink-soft">Also</span>
+        {
+          profile.alsoRoles.map((r, i) => (
+            <>
+              {i > 0 && <span class="text-accent" aria-hidden="true">/</span>}
+              <span>{r}</span>
+            </>
+          ))
+        }
+      </p>
+      <p class="mt-3 text-lg font-semibold text-ink-soft">
+        {profile.years} years experience · {profile.location}
+      </p>
+
+      <p class="mt-6 max-w-[58ch] text-lg">{profile.bio}</p>
+
+      <ul class="mt-6 flex flex-wrap gap-2" aria-label="Core stack">
+        {coreStack.map((item) => <li class="border-2 border-ink bg-paper px-2.5 py-1 text-sm font-bold">{item}</li>)}
+      </ul>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href={`mailto:${profile.email}`} class="press border-[3px] border-ink bg-accent px-5 py-3 font-bold text-accent-ink">
+          Email me
+        </a>
+        <a href={profile.links.linkedin} rel="me" class="press border-[3px] border-ink bg-paper px-5 py-3 font-bold">LinkedIn</a>
+        <a href={profile.links.github} rel="me" class="press border-[3px] border-ink bg-paper px-5 py-3 font-bold">GitHub</a>
+      </div>
+    </div>
+
+    <div class="animate-rise grid gap-4 self-start [animation-delay:120ms]">
+      <aside aria-labelledby="proof-title" class="border-[3px] border-ink bg-paper shadow-hard">
+        <h2 id="proof-title" class="label border-b-[3px] border-ink bg-ink px-4 py-2.5 text-paper">Track record</h2>
+        <dl>
+          {
+            proof.map((item, i) => (
+              <div class:list={['grid grid-cols-[7.5rem_1fr] items-baseline gap-3 px-4 py-3.5', i > 0 && 'border-t-2 border-ink']}>
+                <dt class="font-wide text-xl font-black">{item.value}</dt>
+                <dd class="text-sm font-semibold leading-snug text-ink-soft">{item.label}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </aside>
+      <a
+        href={askAiUrl}
+        target="_blank"
+        rel="noopener"
+        class="press flex items-center justify-between gap-3 border-[3px] border-ink bg-ink px-4 py-3 font-bold text-paper"
+      >
+        <span>Ask ChatGPT about me</span>
+        <span aria-hidden="true">↗</span>
+        <span class="sr-only">(opens in a new tab)</span>
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,101 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/archivo/wdth.css';
+
+@theme {
+  --color-paper: oklch(0.972 0.006 40);
+  --color-paper-deep: oklch(0.93 0.008 40);
+  --color-ink: oklch(0.17 0.012 30);
+  --color-ink-soft: oklch(0.38 0.012 30);
+  --color-accent: oklch(0.6 0.215 27);
+  --color-accent-ink: oklch(0.98 0.01 27);
+
+  --font-sans: 'Archivo Variable', ui-sans-serif, system-ui, sans-serif;
+  --shadow-hard: 6px 6px 0 0 var(--color-ink);
+  --shadow-hard-sm: 3px 3px 0 0 var(--color-ink);
+  --shadow-hard-accent: 6px 6px 0 0 var(--color-accent);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --text-section: clamp(1.75rem, 1.3rem + 1.8vw, 2.75rem);
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-variation-settings: 'wdth' 100;
+    line-height: 1.55;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility font-wide {
+  font-variation-settings: 'wdth' 125;
+}
+
+@utility font-condensed {
+  font-variation-settings: 'wdth' 75;
+}
+
+@utility label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Pressable: lifts against its hard shadow on hover, sinks on press. */
+@utility press {
+  box-shadow: var(--shadow-hard);
+  transition:
+    transform 160ms var(--ease-out-quart),
+    box-shadow 160ms var(--ease-out-quart);
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 0 var(--color-ink);
+  }
+  &:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 0 var(--color-ink);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@utility animate-rise {
+  animation: rise 700ms var(--ease-out-quart) both;
+}

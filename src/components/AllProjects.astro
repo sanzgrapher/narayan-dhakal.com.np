@@ -1,0 +1,176 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { categories, projectCategory, projectType, projectUrl, type Category, type Project } from '../lib/projects';
+
+interface Props {
+  projects: Project[];
+}
+const { projects } = Astro.props;
+
+const categoryCounts = projects.reduce<Partial<Record<Category, number>>>((acc, p) => {
+  const c = projectCategory(p);
+  acc[c] = (acc[c] ?? 0) + 1;
+  return acc;
+}, {});
+
+const tagCounts = new Map<string, number>();
+for (const p of projects) for (const t of p.data.stack) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+const topTags = [...tagCounts]
+  .filter(([, n]) => n >= 2)
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  .slice(0, 10)
+  .map(([t]) => t);
+
+const chip =
+  'border-2 border-ink bg-paper px-2.5 py-1 text-sm font-bold transition-[transform,box-shadow,background-color] duration-150 ease-(--ease-out-quart) hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-paper-deep hover:shadow-hard-sm active:translate-0 active:shadow-none aria-pressed:translate-0 aria-pressed:bg-ink aria-pressed:text-paper aria-pressed:shadow-none disabled:pointer-events-none disabled:border-ink/30 disabled:text-ink/35';
+---
+
+<section id="projects" aria-labelledby="projects-title" class="mx-auto max-w-6xl px-5 py-16 sm:px-8 md:py-20">
+  <SectionHeading id="projects-title" title="All projects" level={1}>Everything: startup, open source, side projects and client work.</SectionHeading>
+
+  <div data-project-filters class="mb-6 grid gap-4">
+    <label class="flex items-center gap-3 border-[3px] border-ink bg-paper px-4 py-2.5 focus-within:outline-3 focus-within:outline-offset-3 focus-within:outline-accent">
+      <svg viewBox="0 0 20 20" class="size-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <circle cx="8.5" cy="8.5" r="5.5"></circle><path d="m13 13 5 5"></path>
+      </svg>
+      <span class="sr-only">Search projects</span>
+      <input
+        type="search"
+        data-search
+        placeholder="Search by name, tech or company…"
+        class="w-full bg-transparent font-semibold outline-none placeholder:text-ink-soft"
+      />
+    </label>
+
+    <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by type">
+      <span class="label mr-1 text-ink-soft">Type</span>
+      <button type="button" class={chip} data-category="all" aria-pressed="true">All <span class="opacity-60" data-n>{projects.length}</span></button>
+      {
+        (Object.keys(categories) as Category[])
+          .filter((c) => categoryCounts[c])
+          .map((c) => (
+            <button type="button" class={chip} data-category={c} aria-pressed="false">
+              {categories[c]} <span class="opacity-60" data-n>{categoryCounts[c]}</span>
+            </button>
+          ))
+      }
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by technology">
+      <span class="label mr-1 text-ink-soft">Tech</span>
+      {
+        topTags.map((t) => (
+          <button type="button" class={chip} data-tag={t.toLowerCase()} aria-pressed="false">
+            {t} <span class="opacity-60" data-n>{tagCounts.get(t)}</span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <p class="label mb-3 text-ink-soft" data-count aria-live="polite">Showing {projects.length} of {projects.length}</p>
+
+  <ul class="grid gap-x-10 border-t-2 border-ink md:grid-cols-2" data-project-list>
+    {
+      projects.map((p) => (
+        <li
+          class="border-b-2 border-ink"
+          data-category={projectCategory(p)}
+          data-tags={p.data.stack.map((t) => t.toLowerCase()).join('|')}
+          data-text={[p.data.title, p.data.tagline, p.data.summary, p.data.org, p.data.role, ...p.data.stack]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase()}
+        >
+          <a href={projectUrl(p)} class="group -mx-2 block h-full px-2 py-4 transition-colors hover:bg-ink hover:text-paper">
+            <span class="flex items-baseline justify-between gap-4">
+              <span class="font-extrabold">
+                {p.data.title}
+                {p.data.impact && <span class="ml-2 text-sm font-bold whitespace-nowrap text-accent">{p.data.impact}</span>}
+              </span>
+              <span class="label shrink-0 text-ink-soft group-hover:text-paper/75">{p.data.period}</span>
+            </span>
+            {p.data.tagline && (
+              <span class="block text-sm font-semibold text-ink/75 group-hover:text-paper/85">{p.data.tagline}</span>
+            )}
+            <span class="mt-1 line-clamp-2 min-h-[2lh] text-sm text-ink-soft transition-colors group-hover:text-paper/75">
+              {p.data.summary}
+            </span>
+            <span class="label mt-1.5 block text-[0.68rem] text-ink-soft group-hover:text-paper/75">{projectType(p)}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div data-empty hidden class="border-2 border-t-0 border-dashed border-ink p-8 text-center">
+    <p class="font-extrabold">No projects match.</p>
+    <button type="button" data-clear class="mt-3 font-bold text-accent underline decoration-2 underline-offset-4">Clear filters</button>
+  </div>
+</section>
+
+<script>
+  const root = document.getElementById('projects');
+  if (root) {
+    const items = [...root.querySelectorAll<HTMLLIElement>('[data-project-list] > li')];
+    const search = root.querySelector<HTMLInputElement>('[data-search]')!;
+    const catButtons = [...root.querySelectorAll<HTMLButtonElement>('button[data-category]')];
+    const tagButtons = [...root.querySelectorAll<HTMLButtonElement>('button[data-tag]')];
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const state = { category: 'all', tag: '', query: '' };
+
+    const matches = (li: HTMLLIElement, category: string, tag: string, terms: string[]) =>
+      (category === 'all' || li.dataset.category === category) &&
+      (!tag || li.dataset.tags!.split('|').includes(tag)) &&
+      terms.every((t) => li.dataset.text!.includes(t));
+
+    const setChip = (b: HTMLButtonElement, n: number, pressed: boolean) => {
+      b.querySelector('[data-n]')!.textContent = String(n);
+      b.setAttribute('aria-pressed', String(pressed));
+      b.disabled = n === 0 && !pressed;
+    };
+
+    const apply = () => {
+      const terms = state.query.toLowerCase().split(/\s+/).filter(Boolean);
+      let shown = 0;
+      for (const li of items) {
+        const match = matches(li, state.category, state.tag, terms);
+        li.hidden = !match;
+        if (match) shown++;
+      }
+      count.textContent = `Showing ${shown} of ${items.length}`;
+      empty.hidden = shown > 0;
+      catButtons.forEach((b) => {
+        const c = b.dataset.category!;
+        setChip(b, items.filter((li) => matches(li, c, state.tag, terms)).length, c === state.category);
+      });
+      tagButtons.forEach((b) => {
+        const t = b.dataset.tag!;
+        setChip(b, items.filter((li) => matches(li, state.category, t, terms)).length, t === state.tag);
+      });
+    };
+
+    search.addEventListener('input', () => {
+      state.query = search.value;
+      apply();
+    });
+    catButtons.forEach((b) =>
+      b.addEventListener('click', () => {
+        state.category = b.dataset.category!;
+        apply();
+      }),
+    );
+    tagButtons.forEach((b) =>
+      b.addEventListener('click', () => {
+        state.tag = state.tag === b.dataset.tag ? '' : b.dataset.tag!;
+        apply();
+      }),
+    );
+    root.querySelector('[data-clear]')!.addEventListener('click', () => {
+      Object.assign(state, { category: 'all', tag: '', query: '' });
+      search.value = '';
+      apply();
+    });
+  }
+</script>

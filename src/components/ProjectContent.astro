@@ -1,0 +1,120 @@
+---
+import Tags from './Tags.astro';
+import { projectType, type Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  /** When true, omit the outer article chrome used by the SEO page. */
+  bare?: boolean;
+}
+const { project: p, bare = false } = Astro.props;
+const { title, tagline, summary, impact, badge, role, org, period, stack, highlights, links, visibility } =
+  p.data;
+const type = projectType(p);
+const hasLinks = Boolean(links.live || links.repo || links.store);
+---
+
+<article
+  id="project-detail"
+  class:list={!bare && 'mx-auto max-w-3xl px-5 py-16 sm:px-8 md:py-20'}
+  data-project-id={p.id}
+  data-project-title={title}
+>
+  <p class="label flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-soft">
+    {badge && <span class="bg-ink px-1.5 py-0.5 text-paper">{badge}</span>}
+    {links.live && (
+      <span class="inline-flex items-center gap-1 text-accent">
+        <span class="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+        Live
+      </span>
+    )}
+    <span>
+      {type}
+      {org && ` · ${org}`} · {period}
+    </span>
+  </p>
+
+  {impact && <p class="font-wide mt-4 text-2xl font-black text-accent md:text-3xl">{impact}</p>}
+
+  <h1 class="mt-2 font-wide text-4xl leading-[0.95] font-black tracking-tight uppercase md:text-5xl">
+    {title}<span class="text-accent">.</span>
+  </h1>
+  {tagline && <p class="mt-3 text-xl font-bold text-ink/80">{tagline}</p>}
+
+  <dl class="mt-6 grid gap-3 border-y-2 border-ink py-4 text-sm sm:grid-cols-2">
+    {role && (
+      <div>
+        <dt class="label text-ink-soft">Role</dt>
+        <dd class="font-semibold">{role}</dd>
+      </div>
+    )}
+    {org && (
+      <div>
+        <dt class="label text-ink-soft">Organisation</dt>
+        <dd class="font-semibold">{org}</dd>
+      </div>
+    )}
+    <div>
+      <dt class="label text-ink-soft">Period</dt>
+      <dd class="font-semibold">{period}</dd>
+    </div>
+    <div>
+      <dt class="label text-ink-soft">Visibility</dt>
+      <dd class="font-semibold capitalize">{visibility}</dd>
+    </div>
+  </dl>
+
+  <p class="mt-6 text-lg leading-relaxed">{summary}</p>
+
+  {
+    highlights.length > 0 && (
+      <ul
+        class="mt-8 grid divide-y-2 divide-ink border-2 border-ink sm:grid-cols-(--cols) sm:divide-x-2 sm:divide-y-0"
+        style={`--cols: repeat(${highlights.length}, minmax(0, 1fr))`}
+        aria-label="Highlights"
+      >
+        {highlights.map((part) => (
+          <li class="px-3 py-3">
+            <span class="block text-sm font-extrabold">{part.name}</span>
+            {part.detail && <span class="block text-xs font-semibold text-ink-soft">{part.detail}</span>}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    stack.length > 0 && (
+      <div class="mt-8">
+        <h2 class="label mb-2 text-ink-soft">Stack</h2>
+        <Tags items={stack} />
+      </div>
+    )
+  }
+
+  {
+    hasLinks && (
+      <div class="mt-8 flex flex-wrap gap-3">
+        {links.live && (
+          <a href={links.live} rel="noopener" class="press border-[3px] border-ink bg-accent px-4 py-2.5 font-bold text-accent-ink">
+            Live site ↗
+          </a>
+        )}
+        {links.repo && (
+          <a href={links.repo} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
+            Repository ↗
+          </a>
+        )}
+        {links.store && (
+          <a href={links.store} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
+            App store ↗
+          </a>
+        )}
+      </div>
+    )
+  }
+
+  <div class="prose mt-10 max-w-none empty:hidden">
+    <slot />
+  </div>
+</article>

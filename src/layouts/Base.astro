@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ProjectSheet from '../components/ProjectSheet.astro';
+import { profile } from '../data/profile';
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = `${profile.name}, ${profile.role} in ${profile.location} with ${profile.years} years of experience, also working as ${new Intl.ListFormat('en').format(profile.alsoRoles)}. ${profile.bio}`,
+  type = 'website',
+} = Astro.props;
+
+const fullTitle = title ? `${title} — ${profile.name}` : `${profile.name} — ${profile.role} & ${profile.alsoRoles[0]}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly profile" />
+    <meta name="theme-color" content="#f7f3f1" />
+    <meta name="author" content={profile.name} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body class="min-h-dvh">
+    <a
+      href="#main"
+      class="label sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-ink focus:px-3 focus:py-2 focus:text-paper"
+      >Skip to content</a
+    >
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <ProjectSheet />
+  </body>
+</html>

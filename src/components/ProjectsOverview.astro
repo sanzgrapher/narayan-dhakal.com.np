@@ -1,0 +1,64 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { projectType, projectUrl, type Project } from '../lib/projects';
+
+interface Props {
+  projects: Project[];
+  perColumn?: number;
+}
+const { projects, perColumn = 5 } = Astro.props;
+
+const byFeaturedThenOrder = (a: Project, b: Project) =>
+  Number(b.data.featured) - Number(a.data.featured) || a.data.order - b.data.order;
+
+const pick = (visibility: 'public' | 'private') =>
+  projects
+    .filter((p) => p.data.visibility === visibility)
+    .sort(byFeaturedThenOrder)
+    .slice(0, perColumn);
+
+const columns = [
+  { title: 'Public repos', items: pick('public') },
+  { title: 'Private & client work', items: pick('private') },
+];
+---
+
+<section id="projects" aria-labelledby="projects-title" class="mx-auto max-w-6xl px-5 py-16 sm:px-8 md:py-20">
+  <SectionHeading id="projects-title" title="Projects">Open source, side projects and client work.</SectionHeading>
+
+  <div class="grid gap-x-10 gap-y-8 md:grid-cols-2">
+    {
+      columns.map((col) => (
+        <div class="min-w-0">
+          <h3 class="label mb-2">{col.title}</h3>
+          <ul class="border-t-2 border-ink">
+            {col.items.map((p) => (
+              <li class="border-b-2 border-ink">
+                <a href={projectUrl(p)} class="group -mx-2 block px-2 py-3.5 transition-colors hover:bg-ink hover:text-paper">
+                  <span class="flex items-baseline justify-between gap-4">
+                    <span class="font-extrabold">
+                      {p.data.title}
+                      {p.data.impact && <span class="ml-2 text-sm font-bold whitespace-nowrap text-accent">{p.data.impact}</span>}
+                    </span>
+                    <span class="label shrink-0 text-ink-soft group-hover:text-paper/75">{p.data.period}</span>
+                  </span>
+                  {p.data.tagline && (
+                    <span class="block text-sm font-semibold text-ink/75 group-hover:text-paper/85">{p.data.tagline}</span>
+                  )}
+                  <span class="mt-1 line-clamp-2 min-h-[2lh] text-sm text-ink-soft transition-colors group-hover:text-paper/75">
+                    {p.data.summary}
+                  </span>
+                  <span class="label mt-1.5 block text-[0.68rem] text-ink-soft group-hover:text-paper/75">{projectType(p)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+
+  <a href="/projects" class="press mt-8 inline-flex items-center gap-2 border-[3px] border-ink bg-paper px-5 py-3 font-bold">
+    See all {projects.length} projects <span aria-hidden="true">→</span>
+  </a>
+</section>

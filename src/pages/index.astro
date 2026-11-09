@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Experience from '../components/Experience.astro';
+import SelectedWork from '../components/SelectedWork.astro';
+import Stack from '../components/Stack.astro';
+import ProjectsOverview from '../components/ProjectsOverview.astro';
+import Writing from '../components/Writing.astro';
+import Contact from '../components/Contact.astro';
+import { getProjects } from '../lib/projects';
+
+const { all, selected } = await getProjects();
+---
+
+<Base>
+  <Hero />
+  <SelectedWork projects={selected} />
+  <Experience />
+  <ProjectsOverview projects={all} />
+  <Stack />
+  <Writing />
+  <Contact />
+</Base>

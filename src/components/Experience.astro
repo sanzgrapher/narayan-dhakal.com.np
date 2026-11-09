@@ -1,0 +1,25 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { experience, profile } from '../data/profile';
+---
+
+<section id="experience" aria-labelledby="experience-title" class="mx-auto max-w-6xl px-5 py-16 sm:px-8 md:py-20">
+  <SectionHeading id="experience-title" title="Experience">{profile.years} years building for production.</SectionHeading>
+
+  <ol>
+    {
+      experience.map((job) => (
+        <li class="grid gap-x-10 gap-y-1 border-b-2 border-ink py-5 first:pt-0 md:grid-cols-[9rem_minmax(0,16rem)_minmax(0,1fr)]">
+          <p class="label pt-1 text-ink-soft">{job.period}</p>
+          <div>
+            <h3 class="text-lg font-extrabold">{job.role}</h3>
+            <a href={job.url} class="font-bold text-accent underline decoration-2 underline-offset-4 hover:bg-accent hover:text-accent-ink">
+              {job.org}
+            </a>
+          </div>
+          <p class="text-ink-soft">{job.summary}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>

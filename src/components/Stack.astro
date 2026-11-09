@@ -1,0 +1,27 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { stack } from '../data/profile';
+---
+
+<section id="stack" aria-labelledby="stack-title" class="border-y-[3px] border-ink bg-paper-deep">
+  <div class="mx-auto max-w-6xl px-5 py-16 sm:px-8 md:py-20">
+    <SectionHeading id="stack-title" title="Stack">What I reach for today.</SectionHeading>
+
+    <dl class="grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        stack.map((g) => (
+          <div>
+            <dt class="label mb-2 border-b-2 border-ink pb-1.5">{g.group}</dt>
+            <dd>
+              <ul class="grid gap-1 font-semibold">
+                {g.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

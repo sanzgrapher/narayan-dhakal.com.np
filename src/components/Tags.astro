@@ -1,0 +1,14 @@
+---
+interface Props {
+  items: string[];
+  limit?: number;
+}
+const { items, limit = items.length } = Astro.props;
+const shown = items.slice(0, limit);
+const rest = items.length - shown.length;
+---
+
+<ul class="flex flex-wrap gap-1.5">
+  {shown.map((item) => <li class="label border-2 border-current px-1.5 py-0.5 text-[0.68rem]">{item}</li>)}
+  {rest > 0 && <li class="label px-1 py-0.5 text-[0.68rem] opacity-70">+{rest}</li>}
+</ul>

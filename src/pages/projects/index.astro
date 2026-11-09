@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import AllProjects from '../../components/AllProjects.astro';
+import { getProjects } from '../../lib/projects';
+
+const { all } = await getProjects();
+---
+
+<Base
+  title="Projects"
+  description={`All ${all.length} projects by Narayan Dhakal: Padandas, open-source contributions to Doppar and Filament, Laravel packages, AI agent tooling and client work.`}
+>
+  <AllProjects projects={all} />
+</Base>

@@ -1,0 +1,197 @@
+---
+---
+
+<div data-project-sheet hidden class="fixed inset-0 z-50 flex justify-end">
+  <button
+    type="button"
+    data-sheet-backdrop
+    class="absolute inset-0 z-0 bg-ink/50 opacity-0 transition-opacity duration-300 ease-(--ease-out-quart)"
+    aria-label="Close project details"
+  ></button>
+
+  <aside
+    data-sheet-panel
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="sheet-title"
+    tabindex="-1"
+    class="relative z-10 flex h-full w-full max-w-full translate-x-full flex-col border-l-[3px] border-ink bg-paper shadow-hard transition-transform duration-300 ease-(--ease-out-quart) md:w-1/2"
+  >
+    <header class="flex shrink-0 items-center justify-between gap-3 border-b-[3px] border-ink bg-ink px-4 py-3 text-paper">
+      <div class="flex min-w-0 items-center gap-2">
+        <button
+          type="button"
+          data-sheet-close
+          class="flex size-9 shrink-0 items-center justify-center border-2 border-paper hover:bg-paper hover:text-ink"
+          aria-label="Back"
+        >
+          <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M12.5 4.5 7 10l5.5 5.5" stroke-linecap="square"></path>
+          </svg>
+        </button>
+        <p id="sheet-title" class="label truncate">Project</p>
+      </div>
+      <div class="flex shrink-0 items-center gap-2">
+        <a
+          data-sheet-permalink
+          href="/projects"
+          class="label border-2 border-paper px-2 py-1 text-paper hover:bg-paper hover:text-ink"
+        >
+          Full page
+        </a>
+        <button
+          type="button"
+          data-sheet-close
+          class="label border-2 border-paper px-2 py-1 hover:bg-paper hover:text-ink"
+          aria-label="Close"
+        >
+          Close ✕
+        </button>
+      </div>
+    </header>
+
+    <div data-sheet-body class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-6"></div>
+  </aside>
+</div>
+
+<script>
+  const sheet = document.querySelector<HTMLElement>('[data-project-sheet]');
+  if (sheet) {
+    const backdrop = sheet.querySelector<HTMLElement>('[data-sheet-backdrop]')!;
+    const panel = sheet.querySelector<HTMLElement>('[data-sheet-panel]')!;
+    const body = sheet.querySelector<HTMLElement>('[data-sheet-body]')!;
+    const titleEl = sheet.querySelector<HTMLElement>('#sheet-title')!;
+    const permalink = sheet.querySelector<HTMLAnchorElement>('[data-sheet-permalink]')!;
+    const closeBtns = [...sheet.querySelectorAll<HTMLButtonElement>('[data-sheet-close]')];
+    const PROJECT_RE = /^\/projects\/([^/?#]+)\/?$/;
+
+    let open = false;
+    let pushed = false;
+    let returnUrl = '/';
+    let lastFocus: HTMLElement | null = null;
+    let ignorePop = false;
+
+    const projectPath = (href: string) => {
+      const url = new URL(href, location.origin);
+      return url.origin === location.origin && PROJECT_RE.test(url.pathname)
+        ? url.pathname.replace(/\/$/, '') || url.pathname
+        : null;
+    };
+
+    const show = (visible: boolean) => {
+      open = visible;
+      sheet.hidden = false;
+      document.documentElement.classList.toggle('overflow-hidden', visible);
+      requestAnimationFrame(() => {
+        panel.classList.toggle('translate-x-full', !visible);
+        backdrop.classList.toggle('opacity-0', !visible);
+        if (!visible) {
+          setTimeout(() => {
+            if (!open) sheet.hidden = true;
+          }, 300);
+        }
+      });
+    };
+
+    const render = (html: string, path: string) => {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const detail = doc.querySelector('#project-detail');
+      const title =
+        detail?.getAttribute('data-project-title') ||
+        doc.querySelector('title')?.textContent?.split('—')[0]?.trim() ||
+        'Project';
+      titleEl.textContent = title;
+      permalink.href = path;
+      if (!detail) {
+        body.innerHTML = `<p class="font-extrabold">Could not load this project.</p><p class="mt-2"><a class="font-bold text-accent underline" href="${path}">Open the page instead</a></p>`;
+        return;
+      }
+      body.innerHTML = detail.outerHTML;
+      const article = body.querySelector('#project-detail');
+      article?.removeAttribute('class');
+      const h1 = article?.querySelector('h1');
+      if (h1) {
+        const h2 = document.createElement('h2');
+        h2.className = h1.className;
+        h2.innerHTML = h1.innerHTML;
+        h1.replaceWith(h2);
+      }
+    };
+
+    const openSheet = async (path: string, push: boolean) => {
+      lastFocus = document.activeElement as HTMLElement;
+      if (!open) returnUrl = location.pathname + location.search + location.hash || '/';
+      body.innerHTML = '<p class="font-semibold text-ink-soft">Loading…</p>';
+      titleEl.textContent = 'Project';
+      permalink.href = path;
+      show(true);
+      closeBtns[0]?.focus();
+
+      try {
+        const res = await fetch(path, { headers: { Accept: 'text/html' } });
+        if (!res.ok) throw new Error(String(res.status));
+        render(await res.text(), path);
+      } catch {
+        body.innerHTML = `<p class="font-extrabold">Could not load this project.</p><p class="mt-2"><a class="font-bold text-accent underline" href="${path}">Open the page instead</a></p>`;
+      }
+
+      if (push && location.pathname.replace(/\/$/, '') !== path) {
+        history.pushState({ projectSheet: true }, '', path);
+        pushed = true;
+      }
+    };
+
+    const requestClose = (e?: Event) => {
+      e?.preventDefault();
+      e?.stopPropagation();
+      if (!open) return;
+
+      show(false);
+      lastFocus?.focus();
+
+      if (pushed) {
+        pushed = false;
+        ignorePop = true;
+        history.back();
+      } else if (PROJECT_RE.test(location.pathname)) {
+        history.replaceState({}, '', returnUrl || '/projects');
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest('a');
+      if (!a) return;
+      if (a.target === '_blank' || a.hasAttribute('download') || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+        return;
+      if (a.closest('[data-project-sheet]')) return;
+      const path = projectPath(a.href);
+      if (!path) return;
+      if (PROJECT_RE.test(location.pathname) && !open) return;
+      e.preventDefault();
+      openSheet(path, true);
+    });
+
+    permalink.addEventListener('click', (e) => {
+      e.preventDefault();
+      location.assign(permalink.href);
+    });
+
+    backdrop.addEventListener('click', requestClose);
+    closeBtns.forEach((b) => b.addEventListener('click', requestClose));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open) requestClose(e);
+    });
+
+    window.addEventListener('popstate', () => {
+      if (ignorePop) {
+        ignorePop = false;
+        return;
+      }
+      if (open) {
+        pushed = false;
+        show(false);
+        lastFocus?.focus();
+      }
+    });
+  }
+</script>
