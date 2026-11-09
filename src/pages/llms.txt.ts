@@ -7,7 +7,13 @@ const projectLine = (p: Project) => {
   const url = links?.live ?? links?.repo ?? links?.store;
   const name = url ? `[${title}](${url})` : title;
   const meta = [projectType(p), period, impact].filter(Boolean).join(' · ');
-  return `- ${name}${tagline ? `: ${tagline}` : ''} (${meta}). ${summary} Tech: ${tech.join(', ')}.`;
+  const extras = [
+    links?.repo && url !== links.repo ? `Repo: ${links.repo}` : '',
+    links?.post ? `Demo: ${links.post}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+  return `- ${name}${tagline ? `: ${tagline}` : ''} (${meta}). ${summary}${extras ? ` ${extras}` : ''} Tech: ${tech.join(', ')}.`;
 };
 
 export const GET: APIRoute = async ({ site }) => {

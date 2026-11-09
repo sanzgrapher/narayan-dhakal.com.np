@@ -1,24 +1,41 @@
 ---
 title: Inpost
 tagline: Postman alternative built for AI agents
-summary: Local-first desktop API client my AI agents drive over MCP. They call endpoints, build collections and read run history to fix their own requests. No account, no cloud.
+summary: "Local-first desktop API client: collections, environments, history and a docked response pane — plus an MCP server so agents can send requests and fix their own runs. No account, no cloud."
 impact: 3 releases shipped
 badge: Desktop app
 kind: personal
 visibility: public
+role: Creator
 period: 2026
 stack: [AI / Agentic, Rust, Tauri, React, TypeScript, MCP, OpenAPI]
 highlights:
   - name: MCP server
-    detail: 26 agent tools
+    detail: 26 agent tools on a local port
   - name: Collections
-    detail: Workspaces, environments, OpenAPI
+    detail: Workspaces, folders, OpenAPI import
+  - name: Environments
+    detail: "{{vars}} with secrets kept on device"
   - name: Debug loop
-    detail: Per-request run history
-  - name: Cross-platform
-    detail: Windows · macOS · Linux installers
+    detail: Run history, status, timing & body
+images:
+  - src: /projects/inpost/request.jpg
+    alt: Inpost request editor with collections sidebar, params and Send
+  - src: /projects/inpost/environments.jpg
+    alt: Local environment with baseUrl variable and secrets-on-device note
+  - src: /projects/inpost/response.jpg
+    alt: Successful GET response with JSON body, status and run history
+  - src: /projects/inpost/settings.jpg
+    alt: General settings showing local-first about, layout and developer mode
 links:
+  live: https://github.com/sanzgrapher/inpost/releases
+  liveLabel: Download
   repo: https://github.com/sanzgrapher/inpost
+  repoLabel: View code
 featured: true
 order: 2
 ---
+
+Inpost is a **Postman / Insomnia-style** desktop client built for humans and AI agents. Build requests with params, headers, body and auth; organise them in collections; switch environments with `{{vars}}` (secrets stay on this device). The response pane docks to the right or bottom with status, timing and JSON.
+
+A status bar shows **Inpost MCP** listening locally, so agents can call endpoints, manage collections and read run history to debug failed requests themselves. Everything is local-first — no account — with installers for Windows, macOS and Linux on GitHub Releases.

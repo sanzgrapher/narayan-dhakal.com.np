@@ -1,0 +1,101 @@
+---
+interface Props {
+  images: { src: string; alt: string }[];
+}
+const { images } = Astro.props;
+const multi = images.length > 1;
+---
+
+{
+  images.length > 0 && (
+    <project-carousel class="mt-8 block" data-count={images.length} aria-roledescription="carousel" aria-label="Screenshots">
+      <div
+        data-track
+        class:list={[
+          'flex gap-3 overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+          multi && 'snap-x snap-mandatory scroll-smooth cursor-grab active:cursor-grabbing',
+        ]}
+      >
+        {multi && (
+          <figure
+            data-slide
+            data-clone="end"
+            class="w-[60%] shrink-0 snap-center border-[3px] border-ink bg-paper-deep opacity-55 transition-opacity duration-200"
+            aria-hidden="true"
+          >
+            <img
+              src={images[images.length - 1].src}
+              alt=""
+              class="aspect-video w-full object-cover select-none"
+              loading="eager"
+              draggable="false"
+            />
+          </figure>
+        )}
+        {images.map((img, i) => (
+          <figure
+            data-slide
+            data-index={i}
+            class:list={[
+              'shrink-0 border-[3px] border-ink bg-paper-deep transition-opacity duration-200',
+              multi ? 'w-[60%] snap-center opacity-55' : 'w-full',
+              multi && i === 0 && 'opacity-100',
+            ]}
+          >
+            <img
+              src={img.src}
+              alt={img.alt}
+              class="aspect-video w-full object-cover select-none"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              draggable="false"
+            />
+          </figure>
+        ))}
+        {multi && (
+          <figure
+            data-slide
+            data-clone="start"
+            class="w-[60%] shrink-0 snap-center border-[3px] border-ink bg-paper-deep opacity-55 transition-opacity duration-200"
+            aria-hidden="true"
+          >
+            <img
+              src={images[0].src}
+              alt=""
+              class="aspect-video w-full object-cover select-none"
+              loading="eager"
+              draggable="false"
+            />
+          </figure>
+        )}
+      </div>
+
+      {multi && (
+        <div class="mt-3 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            data-prev
+            class="press flex size-10 items-center justify-center border-[3px] border-ink bg-paper font-black"
+            aria-label="Previous screenshot"
+          >
+            ←
+          </button>
+          <p class="label text-ink-soft" data-dots aria-live="polite">
+            1 / {images.length}
+          </p>
+          <button
+            type="button"
+            data-next
+            class="press flex size-10 items-center justify-center border-[3px] border-ink bg-paper font-black"
+            aria-label="Next screenshot"
+          >
+            →
+          </button>
+        </div>
+      )}
+    </project-carousel>
+  )
+}
+
+<script>
+  import '../scripts/project-carousel';
+</script>

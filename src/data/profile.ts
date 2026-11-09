@@ -9,6 +9,7 @@ export const profile = {
   remote: 'Open to remote',
   bio: 'Software engineer, Laravel first. I build the web platform, the AI agents and automation around it, the Flutter app on top, and run the servers it ships to. Founder of Padandas (100K+ users) and co-founder of VeezaFlow.',
   email: 'narayandhakal443@gmail.com',
+  avatar: '/narayan.jpg',
   links: {
     github: 'https://github.com/sanzgrapher',
     linkedin: 'https://www.linkedin.com/in/narayandhakal09/',

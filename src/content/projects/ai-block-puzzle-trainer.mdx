@@ -1,13 +1,35 @@
 ---
 title: AI block puzzle trainer
-tagline: Genetic algorithms in the browser
-summary: Browser playground where agents learn a block puzzle through genetic algorithms, with generation-by-generation charts.
-kind: personal
+tagline: Colour block puzzle · genetic AI
+summary: A 1010!-style colour block puzzle where you place polyominoes to clear lines, plus a browser trainer that evolves up to 50 agents with genetic algorithms.
+impact: 50 agents training
+kind: game
 visibility: public
+role: Creator
 period: 2025
 stack: [AI / Agentic, JavaScript, Chart.js, Genetic algorithms]
+highlights:
+  - name: The game
+    detail: Place shapes, clear lines, rack up score
+  - name: AI training
+    detail: 50 agents evolve generation by generation
+  - name: Compare
+    detail: Load champion weights and play Best Move
+images:
+  - src: /projects/ai-block-puzzle/play.png
+    alt: Colour block puzzle board with current shapes and Best Move controls
+  - src: /projects/ai-block-puzzle/training.jpg
+    alt: Neural evolution dashboard with live generation charts and model weights
+  - src: /projects/ai-block-puzzle/agents.jpg
+    alt: Fifty agents playing the colour block puzzle side by side with score tiers
 links:
   repo: https://github.com/sanzgrapher/Ai-Plays-Color-Box-Game
-  live: https://ai-plays-color-box-game.vercel.app
+  live: https://ai-plays-color-game.narayan-dhakal.com.np/
+  liveLabel: Play now
+  repoLabel: View code
 order: 5
 ---
+
+The game itself is a colour block puzzle in the spirit of **1010!**: an 8×8 board, a hand of polyomino shapes (lines, squares, L and T pieces and more), and points for clearing full rows and columns.
+
+On top of that sits an **AI Game Trainer**. Up to fifty agents play at once. A genetic algorithm breeds the next generation from the best scorers, and live charts track peak and average high scores. You can switch between player mode, training, and model compare — including loading champion JSON weights and asking for a Best Move.

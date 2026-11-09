@@ -1,10 +1,11 @@
 ---
 title: TRaiFIC
 tagline: Nepali number plate recognition
-summary: Three custom-trained models chained to read Nepali plates in Devanagari, covering the official plate shapes on both legacy and new vehicles. FastAPI serves inference; Laravel serves users.
+summary: "ANPR for Nepali plates in Devanagari: detect, deskew, then read each character. The live demo ships a base model; clone the repo to train and run the full-strength models."
 impact: 3 custom-trained models
 kind: personal
 visibility: public
+role: Creator
 period: 2024
 stack: [AI / Agentic, Python, YOLOv8, PyTorch, OpenCV, FastAPI, Laravel]
 highlights:
@@ -14,9 +15,22 @@ highlights:
     detail: Deskews the plate, boxes each character
   - name: Character recognition
     detail: Custom CNN for Devanagari glyphs
+images:
+  - src: /projects/traific/upload.jpg
+    alt: Nepali ANPR upload screen for images and video
+  - src: /projects/traific/results.jpg
+    alt: ANPR results with deskewed plate and per-character Devanagari confidence scores
 links:
   repo: https://github.com/sanzgrapher/TRaiFIC-ANPR-Nepali-Number-Plate-Detection-plus-Character-Recognition
-  live: https://t-rai-fic-anpr-nepali-number-plate.vercel.app
+  live: https://nepali-anpr-and-char-recognition.narayan-dhakal.com.np/
+  post: https://www.linkedin.com/posts/narayandhakal09_machinelearning-computervision-traific-ugcPost-7323668281288978433-ybpB/
+  liveLabel: Detect plate
+  repoLabel: View code
+  postLabel: Watch demo
 featured: true
 order: 3
 ---
+
+TRaiFIC is an Automatic Number Plate Recognition pipeline built for **Nepali plates**. Upload a photo or video; three models run in sequence — plate detection, deskew / character segmentation, then OCR for Devanagari glyphs — and you get the reading plus per-character confidence.
+
+The **live demo** runs a lightweight base model so it fits the current hosting limits. For the full power of the trained models, clone the repository, train locally (or on your own GPU), and swap in the weights. A walkthrough video of the system is on [LinkedIn](https://www.linkedin.com/posts/narayandhakal09_machinelearning-computervision-traific-ugcPost-7323668281288978433-ybpB/).

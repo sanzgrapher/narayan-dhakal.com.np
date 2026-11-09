@@ -49,19 +49,56 @@ const askAiUrl = `https://chatgpt.com/?hints=search&q=${encodeURIComponent(askAi
     </div>
 
     <div class="animate-rise grid gap-4 self-start [animation-delay:120ms]">
-      <aside aria-labelledby="proof-title" class="border-[3px] border-ink bg-paper shadow-hard">
-        <h2 id="proof-title" class="label border-b-[3px] border-ink bg-ink px-4 py-2.5 text-paper">Track record</h2>
-        <dl>
-          {
-            proof.map((item, i) => (
-              <div class:list={['grid grid-cols-[7.5rem_1fr] items-baseline gap-3 px-4 py-3.5', i > 0 && 'border-t-2 border-ink']}>
-                <dt class="font-wide text-xl font-black">{item.value}</dt>
-                <dd class="text-sm font-semibold leading-snug text-ink-soft">{item.label}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </aside>
+      <proof-card class="block border-[3px] border-ink bg-paper shadow-hard" aria-labelledby="proof-title">
+        <div class="flex items-stretch border-b-[3px] border-ink bg-ink">
+          <h2 id="proof-title" data-title class="label flex-1 px-4 py-2.5 text-paper">Track record</h2>
+          <button
+            type="button"
+            data-photo-toggle
+            class="press flex size-[2.625rem] shrink-0 items-center justify-center border-l-[3px] border-ink text-paper hover:bg-accent hover:text-accent-ink"
+            aria-label="Show photo"
+            aria-pressed="false"
+            aria-controls="proof-photo"
+          >
+            <svg data-icon-camera xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="square" class="size-4" aria-hidden="true">
+              <path d="M4 8h3l2-2h6l2 2h3v11H4z" />
+              <circle cx="12" cy="13" r="3.25" />
+            </svg>
+            <svg data-icon-close hidden xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="square" class="size-4" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+        {/* Proof keeps layout height; photo overlays the same box so size never jumps.
+            min-h gives the portrait a bit more room than the bare stats list. */}
+        <div class="relative min-h-[22rem]">
+          <dl data-proof class="flex h-full min-h-[22rem] flex-col">
+            <div class="flex flex-1 flex-col justify-center">
+              {
+                proof.map((item, i) => (
+                  <div class:list={['grid grid-cols-[7.5rem_1fr] items-baseline gap-3 px-4 py-3.5', i > 0 && 'border-t-2 border-ink']}>
+                    <dt class="font-wide text-xl font-black">{item.value}</dt>
+                    <dd class="text-sm font-semibold leading-snug text-ink-soft">{item.label}</dd>
+                  </div>
+                ))
+              }
+            </div>
+            <div class="border-t-2 border-ink px-4 py-2.5">
+              <p class="label text-center text-ink-soft">Design · develop · maintain · scale</p>
+            </div>
+          </dl>
+          <div id="proof-photo" data-photo hidden class="absolute inset-0 bg-paper-deep">
+            <img
+              src={profile.avatar}
+              alt={profile.name}
+              width="460"
+              height="460"
+              class="size-full object-cover object-[center_20%]"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </proof-card>
       <a
         href={askAiUrl}
         target="_blank"
@@ -75,3 +112,33 @@ const askAiUrl = `https://chatgpt.com/?hints=search&q=${encodeURIComponent(askAi
     </div>
   </div>
 </section>
+
+<script>
+  class ProofCard extends HTMLElement {
+    connectedCallback() {
+      const btn = this.querySelector<HTMLButtonElement>('[data-photo-toggle]');
+      const title = this.querySelector<HTMLElement>('[data-title]');
+      const proof = this.querySelector<HTMLElement>('[data-proof]');
+      const photo = this.querySelector<HTMLElement>('[data-photo]');
+      const cam = this.querySelector<HTMLElement>('[data-icon-camera]');
+      const close = this.querySelector<HTMLElement>('[data-icon-close]');
+      if (!btn || !title || !proof || !photo || !cam || !close) return;
+
+      btn.addEventListener('click', () => {
+        const open = btn.getAttribute('aria-pressed') !== 'true';
+        btn.setAttribute('aria-pressed', String(open));
+        btn.setAttribute('aria-label', open ? 'Hide photo' : 'Show photo');
+        title.textContent = open ? 'Photo' : 'Track record';
+        // Keep proof in flow (invisible) so the card height stays fixed.
+        proof.classList.toggle('invisible', open);
+        photo.hidden = !open;
+        cam.hidden = open;
+        close.hidden = !open;
+      });
+    }
+  }
+
+  if (!customElements.get('proof-card')) {
+    customElements.define('proof-card', ProofCard);
+  }
+</script>
