@@ -2,7 +2,7 @@ export const profile = {
   name: 'Narayan Dhakal',
   handle: 'sanzgrapher',
   role: 'Laravel developer',
-  alsoRoles: ['AI engineer', 'Flutter developer', 'DevOps & servers'],
+  alsoRoles: ['AI engineer', 'Flutter developer', 'DevOps engineer'],
   years: 4,
   location: 'Pokhara, Nepal',
   availability: 'Open to work',
