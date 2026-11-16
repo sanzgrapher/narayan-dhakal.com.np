@@ -103,7 +103,7 @@
       const detail = doc.querySelector('#project-detail');
       const title =
         detail?.getAttribute('data-project-title') ||
-        doc.querySelector('title')?.textContent?.split('—')[0]?.trim() ||
+        doc.querySelector('title')?.textContent?.split(' - ')[0]?.trim() ||
         'Project';
       titleEl.textContent = title;
       permalink.href = path;

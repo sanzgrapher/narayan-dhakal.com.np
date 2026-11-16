@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 const { title, tagline, summary, impact } = project.data;
-const description = [impact, tagline, summary].filter(Boolean).join(' — ').slice(0, 200);
+const description = [impact, tagline, summary].filter(Boolean).join(' - ').slice(0, 200);
 ---
 
 <Base title={title} description={description}>

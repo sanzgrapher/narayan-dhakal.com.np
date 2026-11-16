@@ -43,7 +43,7 @@ export const experience = [
     role: 'AI engineer & Laravel developer',
     org: 'Home Offer Today',
     url: 'https://homeoffertoday.com/',
-    period: 'Mar 2026 — Now',
+    period: 'Mar 2026 - Now',
     summary:
       'Build the agentic CRM layer that automates repetitive work: AI calls to clients and leads, call grading for staff training, lead generation and appointment booking, a telephony server, and automated property analysis reports.',
   },
@@ -51,7 +51,7 @@ export const experience = [
     role: 'Co-founder & developer',
     org: 'VeezaFlow',
     url: 'https://veezaflow.com/',
-    period: '2026 — Now',
+    period: '2026 - Now',
     summary:
       'Co-founded and build software for education consultancies: leads, admissions and visa cases across every branch in one pipeline, with role-based access per branch.',
   },
@@ -59,7 +59,7 @@ export const experience = [
     role: 'Founder & lead developer',
     org: 'Padandas',
     url: 'https://padandas.com/',
-    period: '2019 — Now',
+    period: '2019 - Now',
     summary:
       'Started it as a personal project and grew it into a startup. Built the whole product: Laravel platform serving 100K+ users, the Flutter app with 5,000+ Play Store downloads, and the API, auth and caching that connect them.',
   },

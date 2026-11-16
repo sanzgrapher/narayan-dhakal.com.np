@@ -17,7 +17,7 @@ const {
   type = 'website',
 } = Astro.props;
 
-const fullTitle = title ? `${title} — ${profile.name}` : `${profile.name} — ${profile.role} & ${profile.alsoRoles[0]}`;
+const fullTitle = title ? `${title} - ${profile.name}` : `${profile.name} - ${profile.role} & ${profile.alsoRoles[0]}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
