@@ -18,6 +18,8 @@ const projects = defineCollection({
     org: z.string().optional(),
     period: z.coerce.string(),
     stack: z.array(z.string()).default([]),
+    // OS targets shown with icons, e.g. Windows / macOS / Linux for desktop apps
+    platforms: z.array(z.enum(['Windows', 'macOS', 'Linux'])).max(3).default([]),
     badge: z.string().optional(),
     // up to 4 parts or wins shown as a strip on the Work card, e.g. web + mobile, or merged PRs
     highlights: z

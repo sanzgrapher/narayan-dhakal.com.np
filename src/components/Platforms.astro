@@ -1,0 +1,71 @@
+---
+interface Props {
+  items: ('Windows' | 'macOS' | 'Linux')[];
+  /** Icon row inside a highlight cell (no chip chrome). */
+  inline?: boolean;
+  /** Compact chips for cards. */
+  compact?: boolean;
+}
+const { items, inline = false, compact = false } = Astro.props;
+
+const iconClass = inline || compact ? 'size-3.5' : 'size-4';
+---
+
+{
+  items.length > 0 &&
+    (inline ? (
+      <span class="mt-1 flex flex-wrap items-center gap-2.5" aria-label={items.join(', ')}>
+        {items.map((name) => (
+          <span class="inline-flex items-center gap-1 text-xs font-semibold text-ink-soft">
+            {name === 'Windows' && (
+              <svg viewBox="0 0 16 16" class={iconClass} aria-hidden="true" fill="currentColor">
+                <path d="M1 2.2 7.2 1.4v6.2H1zm7.4-.9L15 0v7.6H8.4zM1 8.8h6.2V15L1 14.1zm7.4.1H15V16l-6.6-1z" />
+              </svg>
+            )}
+            {name === 'macOS' && (
+              <svg viewBox="0 0 16 16" class={iconClass} aria-hidden="true" fill="currentColor">
+                <path d="M11.2 3.6c-.7.8-1.8 1.4-2.8 1.3-.1-1.1.4-2.2 1.1-2.9.7-.8 1.9-1.3 2.9-1.4.1 1.1-.4 2.2-1.2 3zm2.6 7c.4-.6.7-1.3.8-2-.9-.4-1.5-1.2-1.5-2.2 0-1.1.7-2 1.6-2.4-.6-1-1.6-1.7-2.8-1.8-1.2-.1-1.6.6-2.4.6s-1.3-.6-2.2-.5c-1.1.1-2.2.7-2.8 1.7-1.2 2.1-.3 5.2.9 6.9.6.8 1.3 1.7 2.2 1.7.9 0 1.2-.5 2.3-.5s1.4.5 2.3.5c1 0 1.6-.8 2.2-1.6.4-.5.7-1.1.9-1.7-.1 0-.1 0-.2 0-.8-.1-1.5-.6-1.7-1.3z" />
+              </svg>
+            )}
+            {name === 'Linux' && (
+              <svg viewBox="0 0 16 16" class={iconClass} aria-hidden="true" fill="currentColor">
+                <path d="M8 1.2c-1.4 0-2.5 1.5-2.5 3.4 0 1.2.4 2.3 1 3L5.2 10c-.6.3-1.4 1-1.4 2.1 0 .9.5 1.5 1.2 1.8L4 15.2h1.7l.7-1.1h3.2l.7 1.1H12l-1-1.3c.7-.3 1.2-.9 1.2-1.8 0-1.1-.8-1.8-1.4-2.1L9.5 7.6c.6-.7 1-1.8 1-3 0-1.9-1.1-3.4-2.5-3.4zm0 1.3c.7 0 1.3.9 1.3 2.1S8.7 7 8 7s-1.3-1.2-1.3-2.4.6-2.1 1.3-2.1zM6.4 11.2c.3 0 .6.1.8.3l.8.9.8-.9c.2-.2.5-.3.8-.3.4 0 .8.3.8.7s-.4.7-.8.7c-.2 0-.4 0-.6-.2L8 11.6l-.8.8c-.2.2-.4.2-.6.2-.4 0-.8-.3-.8-.7s.4-.7.8-.7z" />
+              </svg>
+            )}
+            <span>{name === 'macOS' ? 'Mac' : name === 'Windows' ? 'Win' : 'Linux'}</span>
+          </span>
+        ))}
+      </span>
+    ) : (
+      <ul
+        class:list={['flex flex-wrap items-center gap-2', compact ? 'mt-3' : 'mt-6']}
+        aria-label={`Available on ${items.join(', ')}`}
+      >
+        {items.map((name) => (
+          <li
+            class:list={[
+              'inline-flex items-center gap-2 border-2 border-ink bg-paper font-bold',
+              compact ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-sm',
+            ]}
+          >
+            {name === 'Windows' && (
+              <svg viewBox="0 0 16 16" class={iconClass} aria-hidden="true" fill="currentColor">
+                <path d="M1 2.2 7.2 1.4v6.2H1zm7.4-.9L15 0v7.6H8.4zM1 8.8h6.2V15L1 14.1zm7.4.1H15V16l-6.6-1z" />
+              </svg>
+            )}
+            {name === 'macOS' && (
+              <svg viewBox="0 0 16 16" class={iconClass} aria-hidden="true" fill="currentColor">
+                <path d="M11.2 3.6c-.7.8-1.8 1.4-2.8 1.3-.1-1.1.4-2.2 1.1-2.9.7-.8 1.9-1.3 2.9-1.4.1 1.1-.4 2.2-1.2 3zm2.6 7c.4-.6.7-1.3.8-2-.9-.4-1.5-1.2-1.5-2.2 0-1.1.7-2 1.6-2.4-.6-1-1.6-1.7-2.8-1.8-1.2-.1-1.6.6-2.4.6s-1.3-.6-2.2-.5c-1.1.1-2.2.7-2.8 1.7-1.2 2.1-.3 5.2.9 6.9.6.8 1.3 1.7 2.2 1.7.9 0 1.2-.5 2.3-.5s1.4.5 2.3.5c1 0 1.6-.8 2.2-1.6.4-.5.7-1.1.9-1.7-.1 0-.1 0-.2 0-.8-.1-1.5-.6-1.7-1.3z" />
+              </svg>
+            )}
+            {name === 'Linux' && (
+              <svg viewBox="0 0 16 16" class={iconClass} aria-hidden="true" fill="currentColor">
+                <path d="M8 1.2c-1.4 0-2.5 1.5-2.5 3.4 0 1.2.4 2.3 1 3L5.2 10c-.6.3-1.4 1-1.4 2.1 0 .9.5 1.5 1.2 1.8L4 15.2h1.7l.7-1.1h3.2l.7 1.1H12l-1-1.3c.7-.3 1.2-.9 1.2-1.8 0-1.1-.8-1.8-1.4-2.1L9.5 7.6c.6-.7 1-1.8 1-3 0-1.9-1.1-3.4-2.5-3.4zm0 1.3c.7 0 1.3.9 1.3 2.1S8.7 7 8 7s-1.3-1.2-1.3-2.4.6-2.1 1.3-2.1zM6.4 11.2c.3 0 .6.1.8.3l.8.9.8-.9c.2-.2.5-.3.8-.3.4 0 .8.3.8.7s-.4.7-.8.7c-.2 0-.4 0-.6-.2L8 11.6l-.8.8c-.2.2-.4.2-.6.2-.4 0-.8-.3-.8-.7s.4-.7.8-.7z" />
+              </svg>
+            )}
+            <span>{name}</span>
+          </li>
+        ))}
+      </ul>
+    ))
+}

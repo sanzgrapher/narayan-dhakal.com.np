@@ -1,5 +1,6 @@
 ---
 import Tags from './Tags.astro';
+import Platforms from './Platforms.astro';
 import ProjectCarousel from './ProjectCarousel.astro';
 import { projectType, type Project } from '../lib/projects';
 
@@ -9,8 +10,22 @@ interface Props {
   bare?: boolean;
 }
 const { project: p, bare = false } = Astro.props;
-const { title, tagline, summary, impact, badge, role, org, period, stack, highlights, links, visibility, images } =
-  p.data;
+const {
+  title,
+  tagline,
+  summary,
+  impact,
+  badge,
+  role,
+  org,
+  period,
+  stack,
+  platforms,
+  highlights,
+  links,
+  visibility,
+  images,
+} = p.data;
 const type = projectType(p);
 const hasLinks = Boolean(links.live || links.repo || links.store || links.post);
 ---
@@ -79,7 +94,11 @@ const hasLinks = Boolean(links.live || links.repo || links.store || links.post);
         {highlights.map((part) => (
           <li class="px-3 py-3">
             <span class="block text-sm font-extrabold">{part.name}</span>
-            {part.detail && <span class="block text-xs font-semibold text-ink-soft">{part.detail}</span>}
+            {part.name === 'Platforms' && platforms.length > 0 ? (
+              <Platforms items={platforms} inline />
+            ) : (
+              part.detail && <span class="block text-xs font-semibold text-ink-soft">{part.detail}</span>
+            )}
           </li>
         ))}
       </ul>

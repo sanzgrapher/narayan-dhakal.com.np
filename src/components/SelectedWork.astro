@@ -1,6 +1,7 @@
 ---
 import SectionHeading from './SectionHeading.astro';
 import Tags from './Tags.astro';
+import Platforms from './Platforms.astro';
 import { projectUrl, projectType, type Project } from '../lib/projects';
 
 interface Props {
@@ -48,7 +49,11 @@ const { projects } = Astro.props;
                     {p.data.highlights.map((part) => (
                       <li class="px-3 py-2">
                         <span class="block text-sm font-extrabold">{part.name}</span>
-                        {part.detail && <span class="block text-xs font-semibold text-ink-soft">{part.detail}</span>}
+                        {part.name === 'Platforms' && p.data.platforms.length > 0 ? (
+                          <Platforms items={p.data.platforms} inline />
+                        ) : (
+                          part.detail && <span class="block text-xs font-semibold text-ink-soft">{part.detail}</span>
+                        )}
                       </li>
                     ))}
                   </ul>
