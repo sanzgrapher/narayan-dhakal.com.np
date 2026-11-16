@@ -1,7 +1,12 @@
 {
   "name": "narayan-dhakal-com-np",
   "compatibility_date": "2026-11-16",
+  "workers_dev": true,
   "assets": {
     "directory": "./dist"
-  }
+  },
+  "routes": [
+    { "pattern": "narayan-dhakal.com.np", "custom_domain": true },
+    { "pattern": "www.narayan-dhakal.com.np", "custom_domain": true }
+  ]
 }
