@@ -78,16 +78,32 @@ import { experience, profile } from '../data/profile';
     </header>
 
     <div data-exp-body class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-6"></div>
+
+    <footer class="shrink-0 border-t-2 border-ink bg-paper px-5 py-3 sm:px-6">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="label text-ink-soft">Want to work together?</p>
+        <div class="flex flex-wrap gap-2">
+          <a
+            href={`mailto:${profile.email}`}
+            class="press inline-flex border-2 border-ink bg-accent px-3 py-1.5 text-sm font-bold text-accent-ink"
+          >
+            Email me
+          </a>
+          <a
+            href={profile.links.linkedin}
+            class="press inline-flex border-2 border-ink bg-paper px-3 py-1.5 text-sm font-bold"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </footer>
   </aside>
 </div>
 
-<script
-  define:vars={{
-    experience,
-    contactEmail: profile.email,
-    contactLinkedin: profile.links.linkedin,
-  }}
->
+<script define:vars={{ experience }}>
   const sheet = document.querySelector('[data-exp-sheet]');
   if (!sheet) throw new Error('experience sheet missing');
 
@@ -124,20 +140,11 @@ import { experience, profile } from '../data/profile';
       : '';
 
     return `<div>
-      <p class="label text-ink">${esc(job.duration)}</p>
-      <p class="label mt-1 text-ink-soft">${esc(job.period)}</p>
+      <p class="label text-ink-soft">${esc(job.period)} <span class="text-ink">· ${esc(job.duration)}</span></p>
       <h3 class="mt-2 text-xl font-extrabold">${esc(job.role)}</h3>
       <a href="${esc(job.url)}" class="mt-1 inline-block font-bold text-accent underline decoration-2 underline-offset-4 hover:bg-accent hover:text-accent-ink" target="_blank" rel="noopener noreferrer">${esc(job.org)}</a>
       <p class="mt-4 text-ink-soft">${esc(job.summary)}</p>
       ${roles}
-      <div class="mt-8 border-t-2 border-ink pt-6">
-        <p class="label text-ink-soft">Want to work together?</p>
-        <p class="mt-2 text-ink-soft">Open to freelance, contract or full-time. Reach out and tell me what you are building.</p>
-        <div class="mt-4 flex flex-wrap gap-3">
-          <a href="mailto:${esc(contactEmail)}" class="press inline-flex border-[3px] border-ink bg-accent px-5 py-3 font-bold text-accent-ink">Email me</a>
-          <a href="${esc(contactLinkedin)}" class="press inline-flex border-[3px] border-ink bg-paper px-5 py-3 font-bold" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        </div>
-      </div>
     </div>`;
   };
 

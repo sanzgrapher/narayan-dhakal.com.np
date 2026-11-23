@@ -85,6 +85,33 @@ const hasLinks = Boolean(links.live || links.repo || links.store || links.post);
   <ProjectCarousel images={images} />
 
   {
+    hasLinks && (
+      <div class="mt-5 flex flex-wrap gap-3">
+        {links.live && (
+          <a href={links.live} rel="noopener" class="press border-[3px] border-ink bg-accent px-4 py-2.5 font-bold text-accent-ink">
+            {links.liveLabel ?? 'View site'} ↗
+          </a>
+        )}
+        {links.repo && (
+          <a href={links.repo} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
+            {links.repoLabel ?? 'Repository'} ↗
+          </a>
+        )}
+        {links.store && (
+          <a href={links.store} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
+            {links.storeLabel ?? 'Download app'} ↗
+          </a>
+        )}
+        {links.post && (
+          <a href={links.post} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
+            {links.postLabel ?? 'Watch demo'} ↗
+          </a>
+        )}
+      </div>
+    )
+  }
+
+  {
     highlights.length > 0 && (
       <ul
         class="mt-8 grid divide-y-2 divide-ink border-2 border-ink sm:grid-cols-(--cols) sm:divide-x-2 sm:divide-y-0"
@@ -110,33 +137,6 @@ const hasLinks = Boolean(links.live || links.repo || links.store || links.post);
       <div class="mt-8">
         <h2 class="label mb-2 text-ink-soft">Stack</h2>
         <Tags items={stack} />
-      </div>
-    )
-  }
-
-  {
-    hasLinks && (
-      <div class="mt-8 flex flex-wrap gap-3">
-        {links.live && (
-          <a href={links.live} rel="noopener" class="press border-[3px] border-ink bg-accent px-4 py-2.5 font-bold text-accent-ink">
-            {links.liveLabel ?? 'View site'} ↗
-          </a>
-        )}
-        {links.repo && (
-          <a href={links.repo} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
-            {links.repoLabel ?? 'Repository'} ↗
-          </a>
-        )}
-        {links.store && (
-          <a href={links.store} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
-            {links.storeLabel ?? 'Download app'} ↗
-          </a>
-        )}
-        {links.post && (
-          <a href={links.post} rel="noopener" class="press border-[3px] border-ink bg-paper px-4 py-2.5 font-bold">
-            {links.postLabel ?? 'Watch demo'} ↗
-          </a>
-        )}
       </div>
     )
   }
