@@ -8,18 +8,177 @@ import { experience, profile } from '../data/profile';
 
   <ol>
     {
-      experience.map((job) => (
-        <li class="grid gap-x-10 gap-y-1 border-b-2 border-ink py-5 first:pt-0 md:grid-cols-[9rem_minmax(0,16rem)_minmax(0,1fr)]">
-          <p class="label pt-1 text-ink-soft">{job.period}</p>
-          <div>
-            <h3 class="text-lg font-extrabold">{job.role}</h3>
-            <a href={job.url} class="font-bold text-accent underline decoration-2 underline-offset-4 hover:bg-accent hover:text-accent-ink">
-              {job.org}
-            </a>
-          </div>
-          <p class="text-ink-soft">{job.summary}</p>
+      experience.map((job, i) => (
+        <li class="border-b-2 border-ink first:pt-0">
+          <button
+            type="button"
+            data-exp-open={String(i)}
+            class="group relative grid w-full gap-x-10 gap-y-1 py-5 pr-8 text-left transition-colors hover:bg-paper-deep md:grid-cols-[9rem_minmax(0,16rem)_minmax(0,1fr)]"
+          >
+            <span
+              aria-hidden="true"
+              class="pointer-events-none absolute top-5 right-1 text-lg font-bold text-ink opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+            >
+              ↗
+            </span>
+            <div class="pt-1">
+              <p class="label text-ink">{job.duration}</p>
+              <p class="label mt-1 text-ink-soft">{job.period}</p>
+            </div>
+            <div>
+              <h3 class="text-lg font-extrabold">{job.role}</h3>
+              <p class="font-bold text-accent underline decoration-2 underline-offset-4">{job.org}</p>
+            </div>
+            <p class="text-ink-soft">{job.summary}</p>
+          </button>
         </li>
       ))
     }
   </ol>
 </section>
+
+<div data-exp-sheet hidden class="fixed inset-0 z-50 flex justify-end">
+  <button
+    type="button"
+    data-exp-backdrop
+    class="absolute inset-0 z-0 bg-ink/50 opacity-0 transition-opacity duration-300 ease-(--ease-out-quart)"
+    aria-label="Close experience details"
+  ></button>
+
+  <aside
+    data-exp-panel
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="exp-sheet-title"
+    tabindex="-1"
+    class="relative z-10 flex h-full w-full max-w-full translate-x-full flex-col border-l-[3px] border-ink bg-paper shadow-hard transition-transform duration-300 ease-(--ease-out-quart) md:w-1/2"
+  >
+    <header class="flex shrink-0 items-center justify-between gap-3 border-b-[3px] border-ink bg-ink px-4 py-3 text-paper">
+      <div class="flex min-w-0 items-center gap-2">
+        <button
+          type="button"
+          data-exp-close
+          class="flex size-9 shrink-0 items-center justify-center border-2 border-paper hover:bg-paper hover:text-ink"
+          aria-label="Back"
+        >
+          <svg viewBox="0 0 20 20" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M12.5 4.5 7 10l5.5 5.5" stroke-linecap="square"></path>
+          </svg>
+        </button>
+        <p id="exp-sheet-title" class="label truncate">Experience</p>
+      </div>
+      <button
+        type="button"
+        data-exp-close
+        class="label border-2 border-paper px-2 py-1 hover:bg-paper hover:text-ink"
+        aria-label="Close"
+      >
+        Close ✕
+      </button>
+    </header>
+
+    <div data-exp-body class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-6"></div>
+  </aside>
+</div>
+
+<script
+  define:vars={{
+    experience,
+    contactEmail: profile.email,
+    contactLinkedin: profile.links.linkedin,
+  }}
+>
+  const sheet = document.querySelector('[data-exp-sheet]');
+  if (!sheet) throw new Error('experience sheet missing');
+
+  const backdrop = sheet.querySelector('[data-exp-backdrop]');
+  const panel = sheet.querySelector('[data-exp-panel]');
+  const body = sheet.querySelector('[data-exp-body]');
+  const titleEl = sheet.querySelector('#exp-sheet-title');
+  const closeBtns = [...sheet.querySelectorAll('[data-exp-close]')];
+
+  let open = false;
+  let lastFocus = null;
+
+  const esc = (s) =>
+    String(s)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+
+  const render = (job) => {
+    const roles = job.roles?.length
+      ? `<ol class="mt-6 space-y-0 border-l-2 border-ink pl-4">
+          ${job.roles
+            .map(
+              (r) => `<li class="relative pb-5 last:pb-0">
+                <span class="absolute -left-[1.35rem] top-1.5 size-2.5 border-2 border-ink bg-accent" aria-hidden="true"></span>
+                <p class="label text-ink-soft">${esc(r.period)}</p>
+                <h4 class="mt-0.5 text-base font-extrabold">${esc(r.title)}</h4>
+                <p class="mt-1 text-ink-soft">${esc(r.detail)}</p>
+              </li>`,
+            )
+            .join('')}
+        </ol>`
+      : '';
+
+    return `<div>
+      <p class="label text-ink">${esc(job.duration)}</p>
+      <p class="label mt-1 text-ink-soft">${esc(job.period)}</p>
+      <h3 class="mt-2 text-xl font-extrabold">${esc(job.role)}</h3>
+      <a href="${esc(job.url)}" class="mt-1 inline-block font-bold text-accent underline decoration-2 underline-offset-4 hover:bg-accent hover:text-accent-ink" target="_blank" rel="noopener noreferrer">${esc(job.org)}</a>
+      <p class="mt-4 text-ink-soft">${esc(job.summary)}</p>
+      ${roles}
+      <div class="mt-8 border-t-2 border-ink pt-6">
+        <p class="label text-ink-soft">Want to work together?</p>
+        <p class="mt-2 text-ink-soft">Open to freelance, contract or full-time. Reach out and tell me what you are building.</p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href="mailto:${esc(contactEmail)}" class="press inline-flex border-[3px] border-ink bg-accent px-5 py-3 font-bold text-accent-ink">Email me</a>
+          <a href="${esc(contactLinkedin)}" class="press inline-flex border-[3px] border-ink bg-paper px-5 py-3 font-bold" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
+      </div>
+    </div>`;
+  };
+
+  const setOpen = (next, job) => {
+    open = next;
+    if (next && job) {
+      lastFocus = document.activeElement;
+      titleEl.textContent = job.org;
+      body.innerHTML = render(job);
+      sheet.hidden = false;
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        panel.classList.remove('translate-x-full');
+        panel.focus();
+      });
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      backdrop.classList.add('opacity-0');
+      panel.classList.add('translate-x-full');
+      const done = () => {
+        if (open) return;
+        sheet.hidden = true;
+        body.innerHTML = '';
+        document.documentElement.style.overflow = '';
+        lastFocus?.focus?.();
+      };
+      panel.addEventListener('transitionend', done, { once: true });
+      setTimeout(done, 350);
+    }
+  };
+
+  document.querySelectorAll('[data-exp-open]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const job = experience[Number(btn.getAttribute('data-exp-open'))];
+      if (job) setOpen(true, job);
+    });
+  });
+
+  closeBtns.forEach((btn) => btn.addEventListener('click', () => setOpen(false)));
+  backdrop.addEventListener('click', () => setOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (open && e.key === 'Escape') setOpen(false);
+  });
+</script>
